@@ -1,4 +1,4 @@
-# Trusted Pipeline
+# WIP: Trusted Pipeline
 
 Esse é um laboratório que busca demonstrar como implantar no Red Hat Openshift Container Platform uma solução de pipeline segura (trusted software supply chain) usando as seguintes soluções de middleware:
 
@@ -140,3 +140,5 @@ curl -X POST ${TPA_SERVER_URL}/api/v3/sbom?id=test-sbom  -H "Authorization: Bear
 ```
 envsubst < operator/1-subscription.yaml | oc apply -f -
 ```
+
+Continua ...
