@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/rhtas-operator.openshift-rhtas-operator: ""
+  name: rhtas-operator
+  namespace: openshift-rhtas-operator
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: rhtas-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace

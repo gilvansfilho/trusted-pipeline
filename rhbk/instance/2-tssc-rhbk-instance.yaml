@@ -1,0 +1,45 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak
+  namespace: tssc-rhbk
+spec:
+  http:
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: rhbk-tls-secret
+    tlsSecret: rhbk-tls-secret
+  proxy:
+    headers: xforwarded
+  hostname:
+    strict: true
+    # ATUALIZAR - domínio do cluster
+    hostname: tssc-rhbk.${CLUSTER_DOMAIN}
+  ingress:
+    enabled: true
+    className: openshift-default
+    annotations:
+      route.openshift.io/termination: reencrypt
+  db:
+    database: postgresql
+    host: postgresql.tssc-rhbk-database.svc.cluster.local
+    passwordSecret:
+      key: database-password
+      name: rhbk-database-credentials
+    usernameSecret:
+      key: database-name
+      name: rhbk-database-credentials
+    vendor: postgres
+  instances: 2
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: rhbk-database-credentials
+  namespace: tssc-rhbk
+data:
+  database-name: cG9zdGdyZXNxbA==
+  database-password: cG9zdGdyZXNxbA==
+  database-user: cG9zdGdyZXNxbA==
+type: Opaque

@@ -1,0 +1,12 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: tssc-tpa-bucket
+  namespace: trusted-profile-analyzer
+  labels:
+    app: tssc-tpa-storage
+spec:
+  additionalConfig:
+    bucketclass: noobaa-default-bucket-class
+  generateBucketName: tssc-tpa-bucket
+  storageClassName: openshift-storage.noobaa.io

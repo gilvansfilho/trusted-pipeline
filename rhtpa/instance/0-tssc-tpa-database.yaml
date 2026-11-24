@@ -1,0 +1,140 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: tssc-tpa-database
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: postgresql
+  namespace: tssc-tpa-database
+data:
+  database-name: cG9zdGdyZXNxbA==
+  database-password: cG9zdGdyZXNxbA==
+  database-user: cG9zdGdyZXNxbA==
+type: Opaque
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgresql
+  namespace: tssc-tpa-database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  namespace: tssc-tpa-database
+spec:
+  selector:
+    deploymentconfig: postgresql
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: postgresql
+  namespace: tssc-tpa-database
+spec:
+  strategy:
+    type: Recreate
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - postgresql
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: 'postgresql:latest'
+        lastTriggeredImage: 'registry.redhat.io/rhel8/postgresql-15@sha256:8c2d716b7bbbd7f29c321704930d69953a358dfdff47b12ae08f3825b72cbc49'
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    name: postgresql
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: postgresql
+        app: tssc-tpa-database
+    spec:
+      volumes:
+        - name: postgresql-data
+          persistentVolumeClaim:
+            claimName: postgresql
+      containers:
+        - resources:
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command:
+                - /usr/libexec/check-container
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: postgresql
+          livenessProbe:
+            exec:
+              command:
+                - /usr/libexec/check-container
+                - '--live'
+            initialDelaySeconds: 120
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: database-user
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: database-password
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: database-name
+          securityContext:
+            capabilities: {}
+            privileged: false
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/pgsql/data
+          terminationMessagePolicy: File
+          image: 'registry.redhat.io/rhel8/postgresql-15@sha256:8c2d716b7bbbd7f29c321704930d69953a358dfdff47b12ae08f3825b72cbc49'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler

@@ -1,0 +1,9 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: CTlog.v1.rhtas.redhat.com,CTlog.v1alpha1.rhtas.redhat.com,Console.v1.rhtas.redhat.com,Fulcio.v1.rhtas.redhat.com,Fulcio.v1alpha1.rhtas.redhat.com,Rekor.v1.rhtas.redhat.com,Rekor.v1alpha1.rhtas.redhat.com,Securesign.v1.rhtas.redhat.com,Securesign.v1alpha1.rhtas.redhat.com,TimestampAuthority.v1.rhtas.redhat.com,TimestampAuthority.v1alpha1.rhtas.redhat.com,Trillian.v1.rhtas.redhat.com,Trillian.v1alpha1.rhtas.redhat.com,Tuf.v1.rhtas.redhat.com,Tuf.v1alpha1.rhtas.redhat.com
+  generateName: openshift-rhtas-operator-
+  namespace: openshift-rhtas-operator
+spec:
+  upgradeStrategy: Default

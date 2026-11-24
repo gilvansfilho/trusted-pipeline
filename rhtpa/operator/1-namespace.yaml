@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: trusted-profile-analyzer
+  labels:
+    openshift.io/cluster-monitoring: "true"
