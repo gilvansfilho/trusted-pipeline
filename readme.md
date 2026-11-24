@@ -54,7 +54,7 @@ envsubst < rhbk\instance\2-tssc-rhbk-instance.yaml | oc apply -f -
 
 ### Criar e preparar o realm do RHTPA
 
-Source: https://github.com/guacsec/trustify/blob/main/docs/book/modules/admin/pages/infrastructure.adoc#_keycloak_config_script (adapted for this lab)
+Fonte: https://github.com/guacsec/trustify/blob/main/docs/book/modules/admin/pages/infrastructure.adoc#_keycloak_config_script (Adaptado para esse laboratório)
 
 **ATENÇÃO** Atualize a variável `RHBK_KCADM_PATH` com o valor correspondente em sua máquina / estação de trabalho
 
@@ -134,3 +134,9 @@ curl -X POST ${TPA_SERVER_URL}/api/v3/sbom?id=test-sbom  -H "Authorization: Bear
 ```
 
 > Não prossiga caso ocorram erros para enviar o arquivo SBOM de exemplo
+
+## Instalação do Red Hat Openshift Pipelines Operator
+
+```
+envsubst < operator/1-subscription.yaml | oc apply -f -
+```
